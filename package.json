@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "description": "WIP",
   "main": "src/index.ts",
-  "type": "module",
   "scripts": {
     "start": "ts-node --esm --experimentalSpecifierResolution=node src/index.ts",
-    "test": "mocha tests/*.test.ts"
+    "test": "mocha tests/*.test.ts",
+    "create": "knex migrate:latest --knexfile src/models/repositories/knexfile.js",
+    "makeMigration": "knex migrate:make --migrations-directory src/models/repositories/migrations -x ts"
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,8 @@
     "mocha": "^10.2.0",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.0.3"
+    "typescript": "^5.0.3",
+    "knex": "^2.4.2",
+    "pg": "^8.10.0"
   }
 }
