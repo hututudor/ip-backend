@@ -3,6 +3,8 @@ import 'dotenv/config';
 
 import { migrate } from './db';
 import { UsersRepository } from './repositories';
+import { LobbyRepository } from './repositories';
+import { Lobby } from './models';
 
 const app = express();
 
