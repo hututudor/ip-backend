@@ -2,7 +2,7 @@ import { Knex } from 'knex';
 
 export async function up(knex: Knex): Promise<void> {
   return knex.schema
-    .createTable('Users', table => {
+    .createTable('users', table => {
       table.increments('id').primary();
       table.string('username', 256).notNullable();
       table.string('name', 256).notNullable();
@@ -10,21 +10,21 @@ export async function up(knex: Knex): Promise<void> {
       table.date('createdAt').defaultTo(knex.fn.now());
       table.date('updatedAt').defaultTo(knex.fn.now());
     })
-    .createTable('Lobbies', table => {
+    .createTable('lobbies', table => {
       table.increments('id').primary();
       table.string('gameEngineID', 256).notNullable();
       table.specificType('userIDs', 'text[]');
       table.date('createdAt').defaultTo(knex.fn.now());
       table.date('updatedAt').defaultTo(knex.fn.now());
     })
-    .createTable('Wills', table => {
+    .createTable('wills', table => {
       table.increments('id').primary();
       table.string('data').nullable();
       table.string('userID', 256).notNullable();
       table.date('createdAt').defaultTo(knex.fn.now());
       table.date('updatedAt').defaultTo(knex.fn.now());
     })
-    .createTable('Messages', table => {
+    .createTable('messages', table => {
       table.increments('id').primary();
       table.string('data').notNullable();
       table.string('userID', 256).notNullable();
@@ -37,8 +37,8 @@ export async function up(knex: Knex): Promise<void> {
 
 export async function down(knex: Knex): Promise<void> {
   return knex.schema
-    .dropTableIfExists('Users')
-    .dropTableIfExists('Lobbies')
-    .dropTableIfExists('Wills')
-    .dropTableIfExists('Messages');
+    .dropTableIfExists('users')
+    .dropTableIfExists('lobbies')
+    .dropTableIfExists('wills')
+    .dropTableIfExists('messages');
 }
