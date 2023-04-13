@@ -3,6 +3,6 @@ import { Will } from '../models';
 
 export class WillRepository extends Repository<Will> {
   getTableName(): string {
-    return 'Will';
+    return 'Wills';
   }
 }

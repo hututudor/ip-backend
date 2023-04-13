@@ -3,6 +3,6 @@ import { Message } from '../models';
 
 export class MessageRepository extends Repository<Message> {
   getTableName(): string {
-    return 'Message';
+    return 'Messages';
   }
 }
