@@ -1,15 +1,24 @@
-import { Response } from 'express';
+import { Response as ExpressResponse } from 'express';
 
-export class _res {
+export const Response
+  = {
   success(data: any) {
-    return (res: Response) => res.status(200).json(data);
-  }
+    return (res: Response) => ({ status: 200, data, error: false });
+  },
 
   unauthorized(data: any) {
-    return (res: Response) => res.status(401).json({ error: true, data });
-  }
+    return (res: Response) => ({ status: 401, data, error: true });
+  },
 
   noData() {
-    return (res: Response) => res.status(409).json({ error: false });
-  }
-}
+    return (res: Response) => ({ status: 409, error: false });
+  },
+
+  notFound(data: any) {
+    return (res: Response) => ({ status: 404, data, error: true });
+  },
+
+  badRequest(data: any) {
+    return (res: Response) => ({ status: 400, data, error: true });
+  },
+};

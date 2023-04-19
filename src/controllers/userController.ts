@@ -1,28 +1,29 @@
-import { Request, Response } from 'express';
+import { Response as ExpressResponse, Request as ExpressRequest } from 'express';
+import { Request } from '../utils/Request';
+import { Response } from '../utils/Response';
+import { User } from '../models';
 
-type User = string; // UserModel
-type Credentials = string;
 
 const users: User[] = [];
 
-export const login = (req: Request, res: Response) => {
-  const credentials: Credentials = req.body;
+export const login = (req: Request) => {
+  const credentials: string = req.body;
   // TODO()
-  res.send('Login successful');
+  return Response.success('Login successful');
 };
 
-export const register = (req: Request, res: Response) => {
+export const register = (req: Request) => {
   const user: User = req.body;
   // TODO()
-  res.send('Registration successful for user ' + user);
+  return Response.success('Registration successful for user ' + user);
 };
 
-export const getProfile = (req: Request, res: Response) => {
+export const getProfile = (req: Request) => {
   // TODO()
   const userId = req.params.userId;
-  res.send('User profile for user with id: ' + userId);
+  return Response.success('User profile for user with id: ' + userId);
 };
-export const auth = (req: Request, res: Response, next: () => void) => {
+export const auth = (req: ExpressRequest, res: ExpressResponse, next: () => void) => {
   // TODO()
   next();
 };
