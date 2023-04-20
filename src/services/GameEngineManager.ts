@@ -30,9 +30,11 @@ export const GameEngineManager = {
       };
     }
   },
-  getState: async (lobbyId: string): Promise<Response> => {
+  getState: async (lobbyId: string, userId: string): Promise<Response> => {
     try {
-      const { data } = await gameEngineClient.get(`/state/${lobbyId}`);
+      const { data } = await gameEngineClient.get(
+        `/state/${lobbyId}?${userId}`,
+      );
 
       return {
         status: 200,

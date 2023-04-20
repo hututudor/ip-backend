@@ -27,5 +27,5 @@ export const getState = async (req: Request): Promise<Response> => {
     return Response.badRequest({ message: error.message });
   }
 
-  return GameEngineManager.getState(req.params.lobbyId);
+  return GameEngineManager.getState(req.params.lobbyId, req.query.userId);
 };
