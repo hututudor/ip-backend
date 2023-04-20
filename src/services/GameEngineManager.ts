@@ -33,7 +33,7 @@ export const GameEngineManager = {
   getState: async (lobbyId: string, userId: string): Promise<Response> => {
     try {
       const { data } = await gameEngineClient.get(
-        `/state/${lobbyId}?${userId}`,
+        `/state/${lobbyId}?userId=${userId}`,
       );
 
       return {
