@@ -30,4 +30,26 @@ export const GameEngineManager = {
       };
     }
   },
+  getState: async (lobbyId: string): Promise<Response> => {
+    try {
+      const { data } = await gameEngineClient.get(`/state/${lobbyId}`);
+
+      return {
+        status: 200,
+        data,
+      };
+    } catch ({ response }: any) {
+      if (response) {
+        return {
+          status: response.status ?? 500,
+          data: response.data,
+        };
+      }
+
+      return {
+        status: 500,
+        data: undefined,
+      };
+    }
+  },
 };
