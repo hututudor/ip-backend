@@ -39,8 +39,8 @@ const createRequest = (req: ExpressRequest): Request => {
 };
 
 export const handleRequest =
-  (handler: (request: Request) => Response) =>
-  (req: ExpressRequest, res: ExpressResponse) => {
-    const { status, data } = handler(createRequest(req));
+  (handler: (request: Request) => Response | Promise<Response>) =>
+  async (req: ExpressRequest, res: ExpressResponse) => {
+    const { status, data } = await handler(createRequest(req));
     res.status(status).json(data);
   };
