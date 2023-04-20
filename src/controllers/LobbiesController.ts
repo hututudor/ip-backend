@@ -21,7 +21,7 @@ export const getState = async (req: Request): Promise<Response> => {
     .object({
       userId: joi.string().required(),
     })
-    .validate(req.body);
+    .validate(req.query);
 
   if (error) {
     return Response.badRequest({ message: error.message });
