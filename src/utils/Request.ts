@@ -1,5 +1,9 @@
-import { Request as ExpressRequest } from 'express';
+import {
+  Request as ExpressRequest,
+  Response as ExpressResponse,
+} from 'express';
 import { IncomingHttpHeaders } from 'http';
+import { Response } from '../utils/Response';
 
 export interface Request {
   body: any;
@@ -8,7 +12,9 @@ export interface Request {
   query: any;
 }
 
-const convertHeaders = (headers: IncomingHttpHeaders): Record<string, string> => {
+const convertHeaders = (
+  headers: IncomingHttpHeaders,
+): Record<string, string> => {
   const convertedHeaders: Record<string, string> = {};
 
   for (const key in headers) {
@@ -23,7 +29,7 @@ const convertHeaders = (headers: IncomingHttpHeaders): Record<string, string> =>
   return convertedHeaders;
 };
 
-export const createRequest = (req: ExpressRequest): Request => {
+const createRequest = (req: ExpressRequest): Request => {
   return {
     body: req.body,
     headers: convertHeaders(req.headers),
@@ -31,3 +37,10 @@ export const createRequest = (req: ExpressRequest): Request => {
     query: req.query,
   };
 };
+
+export const handleRequest =
+  (handler: (request: Request) => Response) =>
+  (req: ExpressRequest, res: ExpressResponse) => {
+    const { status, data } = handler(createRequest(req));
+    res.status(status).json(data);
+  };
