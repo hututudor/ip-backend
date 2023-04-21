@@ -24,6 +24,7 @@ app.get(
 app.post('/state/:lobbyId', handleRequest(LobbiesController.act));
 app.post(`/lobbies`, handleRequest(LobbiesController.join));
 app.get('/state/:lobbyId', handleRequest(LobbiesController.getState));
+app.delete('/lobbies/:lobbyId', handleRequest(LobbiesController.quit));
 
 migrate();
 

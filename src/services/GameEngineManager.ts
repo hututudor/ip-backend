@@ -75,4 +75,26 @@ export const GameEngineManager = {
       };
     }
   },
+  quit: async (lobbyId: string, body: any): Promise<Response> => {
+    try {
+      const { data } = await gameEngineClient.delete(`/lobbies/${lobbyId}`, body);
+
+      return {
+        status: 200,
+        data,
+      };
+    } catch ({ response }: any) {
+      if (response) {
+        return {
+          status: response.status ?? 500,
+          data: response.data,
+        };
+      }
+
+      return {
+        status: 500,
+        data: undefined,
+      };
+    }
+  },
 };
