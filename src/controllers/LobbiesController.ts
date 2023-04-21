@@ -16,6 +16,16 @@ export const act = async (req: Request): Promise<Response> => {
   return GameEngineManager.act(req.params.lobbyId, req.body);
 };
 
+export const join = async (req: Request): Promise<Response> => {
+  const { error } = joi
+    .object({
+      userId: joi.string().required(),
+      code: joi.string(),
+    })
+    .validate(req.body);
+  return GameEngineManager.getState(req.params.lobbyId, req.query.userId);
+};
+
 export const getState = async (req: Request): Promise<Response> => {
   const { error } = joi
     .object({
@@ -27,5 +37,5 @@ export const getState = async (req: Request): Promise<Response> => {
     return Response.badRequest({ message: error.message });
   }
 
-  return GameEngineManager.getState(req.params.lobbyId, req.query.userId);
+  return GameEngineManager.join(req.body);
 };
