@@ -22,6 +22,7 @@ app.get(
 );
 
 app.post('/state/:lobbyId', handleRequest(LobbiesController.act));
+app.get('/state/:lobbyId', handleRequest(LobbiesController.getState));
 
 migrate();
 

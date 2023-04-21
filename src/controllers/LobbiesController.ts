@@ -15,3 +15,17 @@ export const act = async (req: Request): Promise<Response> => {
 
   return GameEngineManager.act(req.params.lobbyId, req.body);
 };
+
+export const getState = async (req: Request): Promise<Response> => {
+  const { error } = joi
+    .object({
+      userId: joi.string().required(),
+    })
+    .validate(req.query);
+
+  if (error) {
+    return Response.badRequest({ message: error.message });
+  }
+
+  return GameEngineManager.getState(req.params.lobbyId, req.query.userId);
+};
