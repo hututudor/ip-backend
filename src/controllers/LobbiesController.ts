@@ -39,3 +39,17 @@ export const getState = async (req: Request): Promise<Response> => {
 
   return GameEngineManager.join(req.body);
 };
+
+export const quit = async (req: Request): Promise<Response> => {
+  const { error } = joi
+    .object({
+      userId: joi.string().required(),
+    })
+    .validate(req.body);
+
+  if (error) {
+    return Response.badRequest({ message: error.message });
+  }
+
+  return GameEngineManager.quit(req.params.lobbyId, req.body.userId);
+};
