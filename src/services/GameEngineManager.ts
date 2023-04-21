@@ -30,4 +30,27 @@ export const GameEngineManager = {
       };
     }
   },
+
+  join: async (body: any): Promise<Response> => {
+    try {
+      const { data } = await gameEngineClient.post(`/lobbies`, body);
+
+      return {
+        status: 200,
+        data,
+      };
+    } catch ({ response }: any) {
+      if (response) {
+        return {
+          status: response.status ?? 500,
+          data: response.data,
+        };
+      }
+
+      return {
+        status: 500,
+        data: undefined,
+      };
+    }
+  },
 };

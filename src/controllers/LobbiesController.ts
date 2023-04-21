@@ -15,3 +15,18 @@ export const act = async (req: Request): Promise<Response> => {
 
   return GameEngineManager.act(req.params.lobbyId, req.body);
 };
+
+export const join = async (req: Request): Promise<Response> => {
+  const { error } = joi
+    .object({
+      userId: joi.string().required(),
+      code: joi.string(),
+    })
+    .validate(req.body);
+
+  if (error) {
+    return Response.badRequest({ message: error.message });
+  }
+
+  return GameEngineManager.join(req.body);
+};
