@@ -75,9 +75,9 @@ export const GameEngineManager = {
       };
     }
   },
-  quit: async (lobbyId: string, userId: string): Promise<Response> => {
+  quit: async (lobbyId: string, body: any): Promise<Response> => {
     try {
-      const { data } = await gameEngineClient.delete(`/lobbies/${lobbyId}?userId=${userId}`);
+      const { data } = await gameEngineClient.delete(`/lobbies/${lobbyId}`, body);
 
       return {
         status: 200,

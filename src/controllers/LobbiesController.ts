@@ -51,5 +51,5 @@ export const quit = async (req: Request): Promise<Response> => {
     return Response.badRequest({ message: error.message });
   }
 
-  return GameEngineManager.quit(req.params.lobbyId, req.body.userId);
+  return GameEngineManager.quit(req.params.lobbyId, req.body);
 };
