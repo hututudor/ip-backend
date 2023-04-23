@@ -30,27 +30,6 @@ export const GameEngineManager = {
       };
     }
   },
-  join: async (body: any): Promise<Response> => {
-    try {
-      const { data } = await gameEngineClient.post(`/lobbies`, body);
-      return {
-        status: 200,
-        data,
-      };
-    } catch ({ response }: any) {
-      if (response) {
-        return {
-          status: response.status ?? 500,
-          data: response.data,
-        };
-      }
-
-      return {
-        status: 500,
-        data: undefined,
-      };
-    }
-  },
   getState: async (lobbyId: string, userId: string): Promise<Response> => {
     try {
       const { data } = await gameEngineClient.get(
@@ -75,9 +54,58 @@ export const GameEngineManager = {
       };
     }
   },
+  join: async (body: any): Promise<Response> => {
+    try {
+      const { data } = await gameEngineClient.post(`/lobbies`, body);
+      return {
+        status: 200,
+        data,
+      };
+    } catch ({ response }: any) {
+      if (response) {
+        return {
+          status: response.status ?? 500,
+          data: response.data,
+        };
+      }
+
+      return {
+        status: 500,
+        data: undefined,
+      };
+    }
+  },
+  start: async (lobbyId: string): Promise<Response> => {
+    try {
+      const { data } = await gameEngineClient.post(
+        `/lobbies/${lobbyId}/start_game`,
+        {},
+      );
+
+      return {
+        status: 200,
+        data,
+      };
+    } catch ({ response }: any) {
+      if (response) {
+        return {
+          status: response.status ?? 500,
+          data: response.data,
+        };
+      }
+
+      return {
+        status: 500,
+        data: undefined,
+      };
+    }
+  },
   quit: async (lobbyId: string, body: any): Promise<Response> => {
     try {
-      const { data } = await gameEngineClient.delete(`/lobbies/${lobbyId}`, body);
+      const { data } = await gameEngineClient.delete(
+        `/lobbies/${lobbyId}`,
+        body,
+      );
 
       return {
         status: 200,

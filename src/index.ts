@@ -22,6 +22,7 @@ app.get(
 );
 
 app.post('/state/:lobbyId', handleRequest(LobbiesController.act));
+app.post('/state/:lobbyId/start_game', handleRequest(LobbiesController.start));
 app.post(`/lobbies`, handleRequest(LobbiesController.join));
 app.get('/state/:lobbyId', handleRequest(LobbiesController.getState));
 app.delete('/lobbies/:lobbyId', handleRequest(LobbiesController.quit));
