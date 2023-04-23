@@ -23,7 +23,12 @@ export const join = async (req: Request): Promise<Response> => {
       code: joi.string(),
     })
     .validate(req.body);
-  return GameEngineManager.getState(req.params.lobbyId, req.query.userId);
+
+  if (error) {
+    return Response.badRequest({ message: error.message });
+  }
+
+  return GameEngineManager.join(req.body);
 };
 
 export const getState = async (req: Request): Promise<Response> => {
@@ -37,7 +42,7 @@ export const getState = async (req: Request): Promise<Response> => {
     return Response.badRequest({ message: error.message });
   }
 
-  return GameEngineManager.join(req.body);
+  return GameEngineManager.getState(req.params.lobbyId, req.query.userId);
 };
 
 export const quit = async (req: Request): Promise<Response> => {
