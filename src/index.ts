@@ -1,5 +1,6 @@
 import express from 'express';
 import 'dotenv/config';
+import cors from 'cors';
 
 import { migrate } from './db';
 import { LobbiesController, UsersController } from './controllers';
@@ -7,11 +8,12 @@ import { handleRequest } from './utils/Request';
 
 const app = express();
 
+app.use(express.json());
+app.use(cors());
+
 app.get('/', (req, res) => {
   res.send('hello world');
 });
-
-app.use(express.json());
 
 app.post('/login', handleRequest(UsersController.login));
 app.post('/register', handleRequest(UsersController.register));
