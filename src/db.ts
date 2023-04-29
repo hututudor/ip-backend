@@ -17,6 +17,7 @@ export const knex = Knex({
 
 export const migrate = async () => {
   console.log('runMigrations/start');
+  await knex.migrate.rollback(); //linie temporara pentru a se actualiza numele coloanelor 'userId'
   await knex.migrate.latest();
   console.log('runMigrations/finished');
 };
