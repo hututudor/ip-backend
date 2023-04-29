@@ -36,6 +36,11 @@ export const login = async (req: Request) => {
       throw new Error(`User ${credentials.username} has not been found`);
     }
 
+    /* Temporary password checking */
+    if (result.user.password !== credentials.password) {
+      throw new Error('Incorrect password');
+    }
+
     accessToken = sign(result.user, process.env.ACCESS_SECRET_KEY!);
   } catch (err) {
     if (err instanceof Error) {
