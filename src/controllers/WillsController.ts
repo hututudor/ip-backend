@@ -17,10 +17,10 @@ export const update = async (req: Request) => {
   const repository = new WillRepository();
 
   const userId: string = 'John';
-  const user = await repository.getById(userId);
-  let updatedContent;
+  const will = await repository.getById(userId);
+  let updatedContent = will.data;
 
-  if (!user) {
+  if (!will) {
     updatedContent = (
       await repository.insert({
         time: req.params.time,
@@ -28,12 +28,10 @@ export const update = async (req: Request) => {
         userId: userId,
       })
     ).data;
-  } else if (req.params.time > user.time) {
-    user.time = req.params.time;
-    user.data = req.params.content;
-    updatedContent = (await repository.update(user)).data;
-  } else {
-    updatedContent = user.data;
+  } else if (req.params.time > will.time) {
+    will.time = req.params.time;
+    will.data = req.params.content;
+    updatedContent = (await repository.update(will)).data;
   }
 
   return Response.success({ data: updatedContent });
