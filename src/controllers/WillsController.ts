@@ -69,5 +69,5 @@ export const getWill = async (req: Request): Promise<Response> => {
     return Response.noData();
   }
   
-  return Response.success({ data: will.data });
+  return Response.success({ data: will?.data ?? "" });
 };
