@@ -4,7 +4,8 @@ import {
 } from 'express';
 import joi from 'joi';
 import jwt from 'jsonwebtoken';
-const { verify, sign } = jwt;
+const { verify, sign, JsonWebTokenError, TokenExpiredError } = jwt;
+import bcrypt from 'bcrypt';
 
 import { Request, Response } from '../utils';
 import { User } from '../models';
@@ -16,8 +17,11 @@ export const login = async (req: Request) => {
   const credentials: { username: string; password: string } = req.body;
   const { error } = joi
     .object({
-      username: joi.string().min(3).max(30).required(),
-      password: joi.string().pattern(new RegExp('^[a-zA-Z0-9]{5,30}$')),
+      username: joi.string().min(5).max(30).required(),
+      password: joi
+        .string()
+        .pattern(new RegExp('^[a-zA-Z0-9]{5,30}$'))
+        .required(),
     })
     .validate(credentials);
 
@@ -26,22 +30,25 @@ export const login = async (req: Request) => {
   }
 
   let accessToken;
-
   try {
     const result = await new UsersRepository().findByUserName(
       credentials.username,
     );
-
     if (!result.user) {
       throw new Error(`User ${credentials.username} has not been found`);
     }
 
-    /* Temporary password checking */
-    if (result.user.password !== credentials.password) {
+    const match = await bcrypt.compare(
+      result.user.password,
+      credentials.password,
+    );
+    if (!match) {
       throw new Error('Incorrect password');
     }
 
-    accessToken = sign(result.user, process.env.ACCESS_SECRET_KEY!);
+    accessToken = sign(result.user, process.env.ACCESS_SECRET_KEY!, {
+      expiresIn: '7d',
+    });
   } catch (err) {
     if (err instanceof Error) {
       return Response.unauthorized({ message: err.message });
@@ -72,7 +79,25 @@ export const auth = (
   req: ExpressRequest,
   res: ExpressResponse,
   next: () => void,
-) => {
-  // TODO()
-  next();
+): { status: number; data: any } | void => {
+  const { token } = req.body;
+
+  if (!token) {
+    res.redirect('/login');
+    return Response.badRequest({ message: 'Missing auhentication token' });
+  }
+
+  try {
+    const decoded = verify(token, process.env.ACCESS_SECRET_KEY!);
+    /* We should store the payload (user info) somewhere, instead of decoding the token on every request */
+    /* e.g. req.user = JSON.parse(decoded.user); */
+    next();
+  } catch (err) {
+    res.redirect('/login');
+    if (err instanceof JsonWebTokenError) {
+      return Response.unauthorized({ message: err.message });
+    } else if (err instanceof TokenExpiredError) {
+      return Response.unauthorized({ message: err.message });
+    }
+  }
 };
