@@ -83,7 +83,6 @@ export const auth = (
   const { token } = req.body;
 
   if (!token) {
-    res.redirect('/login');
     return Response.badRequest({ message: 'Missing auhentication token' });
   }
 
@@ -93,7 +92,6 @@ export const auth = (
     /* e.g. req.user = JSON.parse(decoded.user); */
     next();
   } catch (err) {
-    res.redirect('/login');
     if (err instanceof JsonWebTokenError) {
       return Response.unauthorized({ message: err.message });
     } else if (err instanceof TokenExpiredError) {
