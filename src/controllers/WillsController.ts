@@ -65,9 +65,5 @@ export const getWill = async (req: Request): Promise<Response> => {
 
   const will = await repository.getById(req.query.userId);
 
-  if(!will){
-    return Response.noData();
-  }
-  
   return Response.success({ data: will?.data ?? "" });
 };
