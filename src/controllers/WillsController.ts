@@ -36,3 +36,38 @@ export const update = async (req: Request) => {
 
   return Response.success({ data: updatedContent });
 };
+
+export const getWill = async (req: Request): Promise<Response> => {
+
+  const authUserId = 'John';
+  
+  let userId = authUserId;
+
+  if(!(Object.keys(req.query).length === 0)) {
+     const { error } = joi
+    .object({
+      userId: joi.string().required(),
+    })
+    .validate(req.query);
+
+    if (error) {
+      return Response.badRequest({ message: error.message });
+    }
+
+    userId = req.query.userId;
+  } 
+
+  if(!userId){
+    return Response.unauthorized(userId);
+  }
+
+  const repository = new WillRepository();
+
+  const will = await repository.getById(req.query.userId);
+
+  if(!will){
+    return Response.noData();
+  }
+  
+  return Response.success({ data: will.data });
+};
