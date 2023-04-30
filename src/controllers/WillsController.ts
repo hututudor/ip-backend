@@ -63,7 +63,7 @@ export const getWill = async (req: Request): Promise<Response> => {
 
   const repository = new WillRepository();
 
-  const will = await repository.getById(req.query.userId);
+  const will = await repository.getByUserId(userId);
 
   return Response.success({ data: will?.data ?? "" });
 };
