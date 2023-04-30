@@ -34,6 +34,7 @@ app.get('/state/:lobbyId', handleRequest(LobbiesController.getState));
 app.delete('/lobbies/:lobbyId', handleRequest(LobbiesController.quit));
 
 app.put('/lobbies/:lobbyId/will', handleRequest(WillController.update));
+app.get('/lobbies/:lobbyId/will', handleRequest(WillController.getWill));
 
 migrate();
 
