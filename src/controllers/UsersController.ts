@@ -62,8 +62,6 @@ export const register = async (req: Request) => {
   const user: User = req.body;
   const { error } = joi
     .object({
-      firstName: joi.string().min(3).max(30).required(),
-      lastName: joi.string().min(3).max(30).required(),
       username: joi.string().min(3).max(30).required(),
       password: joi
         .string()
@@ -91,6 +89,7 @@ export const register = async (req: Request) => {
       return Response.unauthorized({ message: err.message });
     }
   }
+
   return Response.success({
     token: accessToken,
     user: result,
@@ -99,8 +98,8 @@ export const register = async (req: Request) => {
 
 export const getProfile = async (req: Request) => {
   const userId = req.query.userId ?? req.userId;
-  let user, profile;
 
+  let user, profile;
   try {
     user = await new UsersRepository().getById(userId);
     if (!user) {
@@ -108,14 +107,13 @@ export const getProfile = async (req: Request) => {
     }
     profile = {
       username: user.username,
-      firstName: user.firstName,
-      lastName: user.lastName,
     };
   } catch (err) {
     if (err instanceof Error) {
       return Response.badRequest({ message: err.message });
     }
   }
+
   return Response.success({
     message: 'User profile for user with id: ' + userId,
     profile,
