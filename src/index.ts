@@ -3,6 +3,7 @@ import 'dotenv/config';
 import cors from 'cors';
 
 import { migrate } from './db';
+import {} from './types/express/index';
 import { LobbiesController, UsersController } from './controllers';
 import { handleRequest } from './utils/Request';
 
