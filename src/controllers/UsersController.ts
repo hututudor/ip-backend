@@ -60,9 +60,35 @@ export const login = async (req: Request) => {
   });
 };
 
-export const register = (req: Request) => {
+export const register = async (req: Request) => {
   const user: User = req.body;
-  // TODO()
+  const { error } = joi
+    .object({
+      username: joi.string().min(3).max(30).required(),
+      password: joi
+        .string()
+        .pattern(new RegExp('^[a-zA-Z0-9]{5,30}$'))
+        .required(),
+      email: joi.string().email().required(),
+    })
+    .validate(user);
+
+  if (error) {
+    return Response.badRequest({ message: error.message });
+  }
+  try {
+    const repository = new UsersRepository();
+    const result = await repository.insert(user);
+    const accessToken = sign(result, process.env.ACCESS_SECRET_KEY!);
+    return Response.success({
+      token: accessToken,
+      user: result,
+    });
+  } catch (err) {
+    if (err instanceof Error) {
+      return Response.unauthorized({ message: err.message });
+    }
+  }
   return Response.success({
     token: '12345',
     user,
