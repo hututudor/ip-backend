@@ -76,6 +76,9 @@ export const register = async (req: Request) => {
   if (error) {
     return Response.badRequest({ message: error.message });
   }
+  const saltRounds = 10;
+  const hashedPassword = await bcrypt.hash(user.password, saltRounds);
+  user.password = hashedPassword;
   let repository = new UsersRepository();
   let result = await repository.insert(user);
   let accessToken = sign(result, process.env.ACCESS_SECRET_KEY!);
