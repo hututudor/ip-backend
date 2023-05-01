@@ -76,10 +76,10 @@ export const register = async (req: Request) => {
   if (error) {
     return Response.badRequest({ message: error.message });
   }
+  let repository = new UsersRepository();
+  let result = await repository.insert(user);
+  let accessToken = sign(result, process.env.ACCESS_SECRET_KEY!);
   try {
-    const repository = new UsersRepository();
-    const result = await repository.insert(user);
-    const accessToken = sign(result, process.env.ACCESS_SECRET_KEY!);
     return Response.success({
       token: accessToken,
       user: result,
@@ -90,8 +90,8 @@ export const register = async (req: Request) => {
     }
   }
   return Response.success({
-    token: '12345',
-    user,
+    token: accessToken,
+    user: result,
   });
 };
 
