@@ -10,6 +10,7 @@ export interface Request {
   headers: Record<string, string>;
   params: any;
   query: any;
+  userId: any;
 }
 
 const convertHeaders = (
@@ -35,6 +36,7 @@ const createRequest = (req: ExpressRequest): Request => {
     headers: convertHeaders(req.headers),
     params: req.params,
     query: req.query,
+    userId: req.userId,
   };
 };
 
