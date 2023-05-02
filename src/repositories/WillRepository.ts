@@ -7,8 +7,10 @@ export class WillRepository extends Repository<Will> {
     return 'wills';
   }
 
-  async getByUserId(userId: string): Promise<Will> {
-    const data = await knex(this.getTableName()).where('userId', userId);
+  async getByUserIdAndLobbyId(userId: string, lobbyId: string): Promise<Will> {
+    const data = await knex(this.getTableName())
+      .where('userId', userId)
+      .andWhere('lobbyId', lobbyId);
     return data[0];
   }
 }

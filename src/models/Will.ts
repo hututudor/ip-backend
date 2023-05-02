@@ -4,4 +4,5 @@ export interface Will extends Model {
   time: number;
   data: string;
   userId: string;
+  lobbyId: string;
 }
