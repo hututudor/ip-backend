@@ -3,8 +3,12 @@ import 'dotenv/config';
 import cors from 'cors';
 
 import { migrate } from './db';
-import {} from './types/express/index';
-import { LobbiesController, UsersController } from './controllers';
+import './types/express/index';
+import {
+  LobbiesController,
+  UsersController,
+  WillController,
+} from './controllers';
 import { handleRequest } from './utils/Request';
 
 const app = express();
@@ -29,6 +33,9 @@ app.post('/state/:lobbyId/start_game', handleRequest(LobbiesController.start));
 app.post(`/lobbies`, handleRequest(LobbiesController.join));
 app.get('/state/:lobbyId', handleRequest(LobbiesController.getState));
 app.delete('/lobbies/:lobbyId', handleRequest(LobbiesController.quit));
+
+app.put('/lobbies/:lobbyId/will', handleRequest(WillController.update));
+app.get('/lobbies/:lobbyId/will', handleRequest(WillController.getWill));
 
 migrate();
 
