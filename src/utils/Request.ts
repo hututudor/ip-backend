@@ -43,6 +43,10 @@ const createRequest = (req: ExpressRequest): Request => {
 export const handleRequest =
   (handler: (request: Request) => Response | Promise<Response>) =>
   async (req: ExpressRequest, res: ExpressResponse) => {
-    const { status, data } = await handler(createRequest(req));
-    res.status(status).json(data);
+    try {
+      const { status, data } = await handler(createRequest(req));
+      res.status(status).json(data);
+    } catch (err: any) {
+      res.status(500).json({ error: true, message: err.message });
+    }
   };
