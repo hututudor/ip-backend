@@ -44,7 +44,8 @@ export const login = async (req: Request) => {
       throw new Error('Incorrect password');
     }
 
-    accessToken = sign(result.user, process.env.ACCESS_SECRET_KEY!, {
+    const { password, ...tokenData } = result.user;
+    accessToken = sign(tokenData, process.env.ACCESS_SECRET_KEY!, {
       expiresIn: '7d',
     });
   } catch (err) {
@@ -74,13 +75,23 @@ export const register = async (req: Request) => {
     return Response.badRequest({ message: error.message });
   }
 
-  let result, accessToken;
+  const existingUser = await new UsersRepository().findByUserName(
+    user.username,
+  );
+
+  if (existingUser.user) {
+    return Response.unauthorized({
+      message: `User ${user.username} already exists`,
+    });
+  }
+
+  let accessToken;
   try {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(user.password, saltRounds);
     user.password = hashedPassword;
     let repository = new UsersRepository();
-    result = await repository.insert(user);
+    const { password, ...result } = await repository.insert(user);
     accessToken = sign(result, process.env.ACCESS_SECRET_KEY!, {
       expiresIn: '7d',
     });
@@ -92,7 +103,6 @@ export const register = async (req: Request) => {
 
   return Response.success({
     token: accessToken,
-    user: result,
   });
 };
 
@@ -108,14 +118,11 @@ export const getProfile = async (req: Request) => {
     profile = {
       username: user.username,
     };
-  } catch (err) {
-    if (err instanceof Error) {
-      return Response.badRequest({ message: err.message });
-    }
+  } catch (err: any) {
+    return Response.badRequest({ message: err.message });
   }
 
   return Response.success({
-    message: 'User profile for user with id: ' + userId,
     profile,
   });
 };
@@ -124,22 +131,20 @@ export const auth = (
   req: ExpressRequest,
   res: ExpressResponse,
   next: () => void,
-): { status: number; data: any } | void => {
-  const { token } = req.body;
+) => {
+  const token = req.headers.authorization;
 
   if (!token) {
-    return Response.badRequest({ message: 'Missing auhentication token' });
+    return res
+      .status(401)
+      .json({ message: 'Missing authorization token', error: true });
   }
 
   try {
     const decoded = verify(token, process.env.ACCESS_SECRET_KEY!);
     req.userId = (decoded as JwtPayload).id;
     next();
-  } catch (err) {
-    if (err instanceof JsonWebTokenError) {
-      return Response.unauthorized({ message: err.message });
-    } else if (err instanceof TokenExpiredError) {
-      return Response.unauthorized({ message: err.message });
-    }
+  } catch (err: any) {
+    return res.status(401).json({ message: err.message, error: true });
   }
 };
