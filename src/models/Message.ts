@@ -1,8 +1,9 @@
 import { Model } from '.';
 
 export interface Message extends Model {
+  time: number;
   data: string;
-  userID: string;
-  type: string;
+  senderId: string;
+  receiverId: string;
   lobbyID: string;
 }
