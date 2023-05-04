@@ -21,14 +21,15 @@ export const send = async (req: Request) => {
 
   let updatedContent;
 
-  updatedContent = ( await repository.insert({
-    time: req.body.time,
-    data: req.body.content,
-    lobbyId: req.params.lobbyId,
-    senderId,
+  updatedContent = (await repository.insert({
+      time: req.body.time,
+      data: req.body.content,
+      lobbyId: req.params.lobbyId,
+      senderId,
+      receiverId: '',
     })
   ).data;
 
 
-  return Response.success({data: updatedContent});
-}
+  return Response.success({ data: updatedContent });
+};
