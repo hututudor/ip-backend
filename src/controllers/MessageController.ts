@@ -1,6 +1,7 @@
 import { MessageRepository } from '../repositories';
 import { Request, Response } from '../utils';
 import joi from 'joi';
+import { GameEngineManager } from '../services/GameEngineManager';
 
 export const send = async (req: Request) => {
   const { error } = joi
@@ -17,19 +18,21 @@ export const send = async (req: Request) => {
 
   const senderId = req.query.userId ?? req.userId;
 
-  // Trebuie facut query pentru peers
+  const peersResponse = await GameEngineManager.getPeers(req.params.lobbyId, senderId, '');
+  const responseObject = JSON.parse(peersResponse.data);
+  const peers = responseObject.peers;
 
-  let updatedContent;
+  for (let i = 0; i < peers.length; i++) {
+    const peer = peers[i];
+    let updatedContent;
 
-  updatedContent = (await repository.insert({
-      time: req.body.time,
-      data: req.body.content,
-      lobbyId: req.params.lobbyId,
-      senderId,
-      receiverId: '',
-    })
-  ).data;
-
-
-  return Response.success({ data: updatedContent });
+    updatedContent = (await repository.insert({
+        time: req.body.time,
+        data: req.body.content,
+        lobbyId: req.params.lobbyId,
+        senderId,
+        receiverId: peer,
+      })
+    ).data;
+  }
 };
