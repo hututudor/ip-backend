@@ -125,4 +125,27 @@ export const GameEngineManager = {
       };
     }
   },
+  getPeers: async (lobbyId: string, userId: string, body: any): Promise<Response> => {
+    try {
+      const { data } = await gameEngineClient.get(
+        `/lobbies/${lobbyId}/peers?userId=${userId}`,
+        body,
+      );
+      return {
+        status:200,
+        data,
+      };
+    } catch ({ response }: any) {
+      if(response) {
+        return {
+          status: response.status ?? 500,
+          data: response.data,
+        };
+      }
+      return {
+        status:500,
+        data: undefined,
+      };
+    }
+  },
 };
