@@ -5,5 +5,5 @@ export interface Message extends Model {
   data: string;
   senderId: string;
   receiverId: string;
-  lobbyID: string;
+  lobbyId: string;
 }
