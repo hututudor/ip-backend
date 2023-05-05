@@ -52,11 +52,11 @@ app.get('/lobbies/:lobbyId/messages',
   UsersController.auth,
   handleRequest(MessageController.getChat),
 );
-app.get('/lobbies/:lobbyId/messages',
+app.post('/lobbies/:lobbyId/messages',
   UsersController.auth,
   handleRequest(MessageController.postMessage),
 );
-app.get('/lobbies/:lobbyId/announce', handleRequest(MessageController.postGlobalMessage));
+app.post('/lobbies/:lobbyId/announce', handleRequest(MessageController.postGlobalMessage));
 
 migrate();
 
