@@ -40,8 +40,8 @@ export const postMessage = async (req: Request) => {
 export const postGlobalMessage = async (req: Request) => {
   const authHeader = req.headers.authorization;
 
-  if (authHeader !== 'SECRET') {
-    return Response.unauthorized('');
+  if (authHeader !== process.env.GAME_ENGINE_SECRET) {
+    return Response.unauthorized({ message: 'incorrect secret provided' });
   }
 
   const { error } = joi
@@ -87,17 +87,7 @@ export const getChat = async (req: Request): Promise<Response> => {
     return Response.badRequest(lobbyId);
   }
 
-  const bodyValidationResult = joi
-    .object({
-      content: joi.string().required(),
-    })
-    .validate(req.body);
-
-  if (bodyValidationResult.error) {
-    return Response.badRequest(bodyValidationResult.error);
-  }
-
-  let time = req.params.from ?? 0;
+  let time = req.query.from ?? 0;
 
   const repository = new MessageRepository();
 
