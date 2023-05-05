@@ -24,9 +24,8 @@ export const send = async (req: Request) => {
 
   for (let i = 0; i < peers.length; i++) {
     const peer = peers[i];
-    let updatedContent;
 
-    updatedContent = (await repository.insert({
+    let updatedContent = (await repository.insert({
         time: req.body.time,
         data: req.body.content,
         lobbyId: req.params.lobbyId,
