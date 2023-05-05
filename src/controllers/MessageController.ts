@@ -3,7 +3,7 @@ import { Request, Response } from '../utils';
 import joi from 'joi';
 import { GameEngineManager } from '../services/GameEngineManager';
 
-export const send = async (req: Request) => {
+export const postMessage = async (req: Request) => {
   const { error } = joi
     .object({
       content: joi.string().required(),
@@ -22,20 +22,60 @@ export const send = async (req: Request) => {
   const responseObject = JSON.parse(peersResponse.data);
   const peers = responseObject.peers;
 
+  const receivedTime = Date.now();
+
   for (let i = 0; i < peers.length; i++) {
     const peer = peers[i];
     (await repository.insert({
-        time: req.body.time,
+        time: receivedTime,
         data: req.body.content,
-        lobbyId: req.params.lobbyId,
         senderId,
         receiverId: peer,
+        lobbyId: req.params.lobbyId,
       })
     ).data;
   }
+  return Response.success('');
 };
 
-export const queryChat = async (req: Request): Promise<Response> => {
+export const postGlobalMessage = async (req: Request) => {
+
+  const authHeader = req.headers.authorization;
+
+  if(authHeader !== 'SECRET')
+    return Response.unauthorized('');
+
+  const { error } = joi
+    .object({
+      content: joi.string().required(),
+      peers: joi.array().items(joi.string()).required(),
+    })
+    .validate(req.body);
+
+  if (error) {
+    return Response.badRequest({ message: error.message });
+  }
+
+  const repository = new MessageRepository();
+
+  const peers = req.body.peers;
+
+  const receivedTime = Date.now();
+  for (let i = 0; i < peers.length; i++) {
+    const peer = peers[i];
+    (await repository.insert({
+        time: receivedTime,
+        data: req.body.content,
+        senderId: '',
+        receiverId: peer,
+        lobbyId: req.params.lobbyId,
+      })
+    ).data;
+  }
+  return Response.success('');
+};
+
+export const getChat = async (req: Request): Promise<Response> => {
   let userId = req.userId;
 
   if (!userId) {
@@ -71,5 +111,11 @@ export const queryChat = async (req: Request): Promise<Response> => {
 
   let messages = await repository.getMessageAfterTime(userId, lobbyId, time);
 
-  return Response.success({ messages: messages });
+  const responseMessages = messages.map(({ time, data, senderId }) => ({
+    userId: senderId,
+    content: data,
+    createdAt: time,
+  }));
+
+  return Response.success({ messages: responseMessages });
 };

@@ -8,8 +8,10 @@ import {
   LobbiesController,
   UsersController,
   WillController,
+  MessageController,
 } from './controllers';
 import { handleRequest } from './utils/Request';
+import { MessageRepository } from './repositories';
 
 const app = express();
 
@@ -44,6 +46,17 @@ app.get(
   UsersController.auth,
   handleRequest(WillController.getWill),
 );
+
+
+app.get('/lobbies/:lobbyId/messages',
+  UsersController.auth,
+  handleRequest(MessageController.getChat),
+);
+app.get('/lobbies/:lobbyId/messages',
+  UsersController.auth,
+  handleRequest(MessageController.postMessage),
+);
+app.get('/lobbies/:lobbyId/announce', handleRequest(MessageController.postGlobalMessage));
 
 migrate();
 
