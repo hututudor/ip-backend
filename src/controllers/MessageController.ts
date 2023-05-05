@@ -18,32 +18,31 @@ export const postMessage = async (req: Request) => {
 
   const senderId = req.query.userId ?? req.userId;
 
-  const peersResponse = await GameEngineManager.getPeers(req.params.lobbyId, senderId, '');
-  const responseObject = JSON.parse(peersResponse.data);
-  const peers = responseObject.peers;
+  const {
+    data: { peers },
+  } = await GameEngineManager.getPeers(req.params.lobbyId, senderId);
 
-  const receivedTime = Date.now();
-
-  for (let i = 0; i < peers.length; i++) {
-    const peer = peers[i];
-    (await repository.insert({
-        time: receivedTime,
+  await Promise.all(
+    peers.map((peer: string) =>
+      repository.insert({
         data: req.body.content,
         senderId,
         receiverId: peer,
         lobbyId: req.params.lobbyId,
-      })
-    ).data;
-  }
+        time: Date.now(),
+      }),
+    ),
+  );
+
   return Response.success('');
 };
 
 export const postGlobalMessage = async (req: Request) => {
-
   const authHeader = req.headers.authorization;
 
-  if(authHeader !== 'SECRET')
+  if (authHeader !== 'SECRET') {
     return Response.unauthorized('');
+  }
 
   const { error } = joi
     .object({
@@ -60,18 +59,18 @@ export const postGlobalMessage = async (req: Request) => {
 
   const peers = req.body.peers;
 
-  const receivedTime = Date.now();
-  for (let i = 0; i < peers.length; i++) {
-    const peer = peers[i];
-    (await repository.insert({
-        time: receivedTime,
+  await Promise.all(
+    peers.map((peer: string) =>
+      repository.insert({
+        time: Date.now(),
         data: req.body.content,
-        senderId: '',
+        senderId: null,
         receiverId: peer,
         lobbyId: req.params.lobbyId,
-      })
-    ).data;
-  }
+      }),
+    ),
+  );
+
   return Response.success('');
 };
 
@@ -84,28 +83,21 @@ export const getChat = async (req: Request): Promise<Response> => {
 
   let lobbyId = req.params.lobbyId;
 
-  if(!lobbyId) {
+  if (!lobbyId) {
     return Response.badRequest(lobbyId);
   }
 
   const bodyValidationResult = joi
     .object({
       content: joi.string().required(),
-      time: joi.number().required(),
     })
     .validate(req.body);
 
-  const paramsValidationResult = joi
-    .object({
-      from: joi.string().required(),
-    })
-    .validate(req.params);
-
-  if (bodyValidationResult.error || paramsValidationResult.error) {
-    return Response.badRequest('');
+  if (bodyValidationResult.error) {
+    return Response.badRequest(bodyValidationResult.error);
   }
 
-  let time = req.params.from;
+  let time = req.params.from ?? 0;
 
   const repository = new MessageRepository();
 
