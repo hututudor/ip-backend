@@ -24,8 +24,7 @@ export const send = async (req: Request) => {
 
   for (let i = 0; i < peers.length; i++) {
     const peer = peers[i];
-
-    let updatedContent = (await repository.insert({
+    (await repository.insert({
         time: req.body.time,
         data: req.body.content,
         lobbyId: req.params.lobbyId,
@@ -34,4 +33,43 @@ export const send = async (req: Request) => {
       })
     ).data;
   }
+};
+
+export const queryChat = async (req: Request): Promise<Response> => {
+  let userId = req.userId;
+
+  if (!userId) {
+    return Response.unauthorized(userId);
+  }
+
+  let lobbyId = req.params.lobbyId;
+
+  if(!lobbyId) {
+    return Response.badRequest(lobbyId);
+  }
+
+  const bodyValidationResult = joi
+    .object({
+      content: joi.string().required(),
+      time: joi.number().required(),
+    })
+    .validate(req.body);
+
+  const paramsValidationResult = joi
+    .object({
+      from: joi.string().required(),
+    })
+    .validate(req.params);
+
+  if (bodyValidationResult.error || paramsValidationResult.error) {
+    return Response.badRequest('');
+  }
+
+  let time = req.params.from;
+
+  const repository = new MessageRepository();
+
+  let messages = await repository.getMessageAfterTime(userId, lobbyId, time);
+
+  return Response.success({ messages: messages });
 };
