@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { Response } from '../utils';
 
-console.log(process.env.GAME_ENGINE_URL);
-
 const gameEngineClient = axios.create({
   baseURL: process.env.GAME_ENGINE_URL,
 });

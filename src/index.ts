@@ -11,7 +11,6 @@ import {
   MessageController,
 } from './controllers';
 import { handleRequest } from './utils/Request';
-import { MessageRepository } from './repositories';
 
 const app = express();
 
@@ -30,11 +29,27 @@ app.get(
   handleRequest(UsersController.getProfile),
 );
 
-app.post('/state/:lobbyId', handleRequest(LobbiesController.act));
+app.post(
+  '/state/:lobbyId',
+  UsersController.auth,
+  handleRequest(LobbiesController.act),
+);
+app.post(
+  `/lobbies`,
+  UsersController.auth,
+  handleRequest(LobbiesController.join),
+);
+app.get(
+  '/state/:lobbyId',
+  UsersController.auth,
+  handleRequest(LobbiesController.getState),
+);
+app.delete(
+  '/lobbies/:lobbyId',
+  UsersController.auth,
+  handleRequest(LobbiesController.quit),
+);
 app.post('/state/:lobbyId/start_game', handleRequest(LobbiesController.start));
-app.post(`/lobbies`, handleRequest(LobbiesController.join));
-app.get('/state/:lobbyId', handleRequest(LobbiesController.getState));
-app.delete('/lobbies/:lobbyId', handleRequest(LobbiesController.quit));
 
 app.put(
   '/lobbies/:lobbyId/will',
@@ -47,16 +62,20 @@ app.get(
   handleRequest(WillController.getWill),
 );
 
-
-app.get('/lobbies/:lobbyId/messages',
+app.get(
+  '/lobbies/:lobbyId/messages',
   UsersController.auth,
   handleRequest(MessageController.getChat),
 );
-app.post('/lobbies/:lobbyId/messages',
+app.post(
+  '/lobbies/:lobbyId/messages',
   UsersController.auth,
   handleRequest(MessageController.postMessage),
 );
-app.post('/lobbies/:lobbyId/announce', handleRequest(MessageController.postGlobalMessage));
+app.post(
+  '/lobbies/:lobbyId/announce',
+  handleRequest(MessageController.postGlobalMessage),
+);
 
 migrate();
 
