@@ -47,6 +47,7 @@ export const handleRequest =
       const { status, data } = await handler(createRequest(req));
       res.status(status).json(data);
     } catch (err: any) {
+      console.error({ err });
       res.status(500).json({ error: true, message: err.message });
     }
   };
