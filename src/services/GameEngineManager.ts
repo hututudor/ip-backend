@@ -52,9 +52,12 @@ export const GameEngineManager = {
       };
     }
   },
-  join: async (body: any): Promise<Response> => {
+  join: async ({ lobbyId, userId }: any): Promise<Response> => {
     try {
-      const { data } = await gameEngineClient.post(`/lobbies`, body);
+      const { data } = await gameEngineClient.post(
+        `/lobbies/${lobbyId}/add_user`,
+        { userId },
+      );
       return {
         status: 200,
         data,

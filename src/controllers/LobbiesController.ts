@@ -12,7 +12,7 @@ export const getState = async (req: Request): Promise<Response> =>
   GameEngineManager.getState(req.params.lobbyId, req.userId);
 
 export const join = async (req: Request): Promise<Response> =>
-  GameEngineManager.join({ ...req.body, userId: req.userId });
+  GameEngineManager.join({ lobbyId: req.params.lobbyId, userId: req.userId });
 
 export const start = async (req: Request): Promise<Response> =>
   GameEngineManager.start(req.params.lobbyId);

@@ -35,7 +35,7 @@ app.post(
   handleRequest(LobbiesController.act),
 );
 app.post(
-  `/lobbies`,
+  `/lobbies/:lobbyId`,
   UsersController.auth,
   handleRequest(LobbiesController.join),
 );

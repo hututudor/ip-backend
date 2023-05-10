@@ -123,7 +123,7 @@ export const getProfile = async (req: Request) => {
   }
 
   return Response.success({
-    profile,
+    ...profile,
   });
 };
 
