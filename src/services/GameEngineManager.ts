@@ -1,5 +1,9 @@
 import axios from 'axios';
 import { Response } from '../utils';
+import { PlayersRepository } from '../repositories/PlayersRepository';
+import { Player, PlayerStatus } from '../models';
+import { string } from 'joi';
+import { LobbiesRepository } from '../repositories';
 
 const gameEngineClient = axios.create({
   baseURL: process.env.GAME_ENGINE_URL,
@@ -28,11 +32,20 @@ export const GameEngineManager = {
       };
     }
   },
-  getState: async (lobbyId: string, userId: string): Promise<Response> => {
+  getState: async (lobbyId: string, userId: number): Promise<Response> => {
     try {
       const { data } = await gameEngineClient.get(
         `/state/${lobbyId}?userId=${userId}`,
       );
+
+      const { currentUser } = data;
+      if (!currentUser.isAlive) {
+        await new PlayersRepository().updatePlayerStatus(
+          userId,
+          lobbyId,
+          'dead',
+        );
+      }
 
       return {
         status: 200,
@@ -58,6 +71,16 @@ export const GameEngineManager = {
         `/lobbies/${lobbyId}/add_user`,
         { userId },
       );
+
+      //Create the lobby if it doesn't already exists
+      const lobby = await new LobbiesRepository().getById(lobbyId);
+      if (!lobby) {
+        new LobbiesRepository().create(lobbyId, 'waiting');
+      }
+
+      //Assign player to lobby
+      await new PlayersRepository().create(userId, lobbyId, 'alive');
+
       return {
         status: 200,
         data,
@@ -82,6 +105,9 @@ export const GameEngineManager = {
         `/lobbies/${lobbyId}/start_game`,
         {},
       );
+
+      //Update lobby status
+      await new LobbiesRepository().update({ id: lobbyId, status: 'started' });
 
       return {
         status: 200,
@@ -108,6 +134,7 @@ export const GameEngineManager = {
         body,
       );
 
+      await new PlayersRepository().delete(body.userId, lobbyId);
       return {
         status: 200,
         data,

@@ -18,7 +18,7 @@ export abstract class Repository<T extends Model> {
     return data[0];
   }
 
-  async update(model: T): Promise<T> {
+  async update(model: Omit<T, 'createdAt' | 'updatedAt'>): Promise<T> {
     const data = await knex(this.getTableName())
       .update(model)
       .where('id', model.id)
