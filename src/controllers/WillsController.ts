@@ -1,4 +1,4 @@
-import { WillRepository } from '../repositories';
+import { LobbiesRepository, WillRepository } from '../repositories';
 import { Request, Response } from '../utils';
 import joi from 'joi';
 
@@ -12,6 +12,14 @@ export const update = async (req: Request) => {
 
   if (error) {
     return Response.badRequest({ message: error.message });
+  }
+
+  const lobbiesRepository = new LobbiesRepository;
+  const lobby = await lobbiesRepository.getById(req.params.lobbyId);
+  if(!lobby){
+    return Response.noData();
+  }else if(lobby.status != 'started'){
+    return Response.badRequest({ message: "The lobby didn't start" })
   }
 
   const repository = new WillRepository();
@@ -56,6 +64,14 @@ export const getWill = async (req: Request): Promise<Response> => {
     }
 
     userId = req.query.userId;
+  }
+
+  const lobbiesRepository = new LobbiesRepository;
+  const lobby = await lobbiesRepository.getById(req.params.lobbyId);
+  if(!lobby){
+    return Response.noData();
+  }else if(lobby.status != 'started'){
+    return Response.badRequest({ message: "The lobby didn't start" })
   }
 
   if (!userId) {
