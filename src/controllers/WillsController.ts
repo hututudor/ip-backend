@@ -14,12 +14,12 @@ export const update = async (req: Request) => {
     return Response.badRequest({ message: error.message });
   }
 
-  const lobbiesRepository = new LobbiesRepository;
+  const lobbiesRepository = new LobbiesRepository();
   const lobby = await lobbiesRepository.getById(req.params.lobbyId);
-  if(!lobby){
-    return Response.noData();
-  }else if(lobby.status != 'started'){
-    return Response.badRequest({ message: "The lobby didn't start" })
+  if (!lobby) {
+    return Response.notFound({ message: "Lobby not found" });
+  } else if (lobby.status != 'started') {
+    return Response.badRequest({ message: "The lobby didn't start" });
   }
 
   const repository = new WillRepository();
@@ -66,12 +66,12 @@ export const getWill = async (req: Request): Promise<Response> => {
     userId = req.query.userId;
   }
 
-  const lobbiesRepository = new LobbiesRepository;
+  const lobbiesRepository = new LobbiesRepository();
   const lobby = await lobbiesRepository.getById(req.params.lobbyId);
-  if(!lobby){
-    return Response.noData();
-  }else if(lobby.status != 'started'){
-    return Response.badRequest({ message: "The lobby didn't start" })
+  if (!lobby) {
+    return Response.notFound({ message: "Lobby not found" });
+  } else if (lobby.status != 'started') {
+    return Response.badRequest({ message: "The lobby didn't start" });
   }
 
   if (!userId) {
