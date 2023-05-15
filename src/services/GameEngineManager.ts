@@ -38,8 +38,7 @@ export const GameEngineManager = {
         `/state/${lobbyId}?userId=${userId}`,
       );
 
-      const { currentUser } = data;
-      if (!currentUser.isAlive) {
+      if (!data?.currentUser?.isAlive) {
         await new PlayersRepository().updatePlayerStatus(
           userId,
           lobbyId,
