@@ -1,4 +1,4 @@
-import { MessageRepository } from '../repositories';
+import { LobbiesRepository, MessageRepository } from '../repositories';
 import { Request, Response } from '../utils';
 import joi from 'joi';
 import { GameEngineManager } from '../services/GameEngineManager';
@@ -12,6 +12,11 @@ export const postMessage = async (req: Request) => {
 
   if (error) {
     return Response.badRequest({ message: error.message });
+  }
+
+  const lobby = await new LobbiesRepository().getById(req.params.lobbyId);
+  if (!lobby) {
+    return Response.notFound({ message: 'Lobby not found' });
   }
 
   const repository = new MessageRepository();
@@ -85,6 +90,11 @@ export const getChat = async (req: Request): Promise<Response> => {
 
   if (!lobbyId) {
     return Response.badRequest(lobbyId);
+  }
+
+  const lobby = await new LobbiesRepository().getById(lobbyId);
+  if (!lobby) {
+    return Response.notFound({ message: 'Lobby not found' });
   }
 
   let time = req.query.from ?? 0;
