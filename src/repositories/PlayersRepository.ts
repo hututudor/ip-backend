@@ -23,4 +23,16 @@ export class PlayersRepository extends Repository<Player> {
       .update('status', status)
       .where({ userId: userId, lobbyId: lobbyId });
   }
+  async getPlayerStatus(userId: number) {
+    const player = await knex(this.getTableName())
+      .select('status')
+      .where({ userId })
+      .first();
+
+    if (player) {
+      return player.status;
+    }
+
+    return null;
+  }
 }

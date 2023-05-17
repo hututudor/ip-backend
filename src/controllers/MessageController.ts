@@ -2,6 +2,7 @@ import { MessageRepository } from '../repositories';
 import { Request, Response } from '../utils';
 import joi from 'joi';
 import { GameEngineManager } from '../services/GameEngineManager';
+import { PlayersRepository } from '../repositories/PlayersRepository';
 
 export const postMessage = async (req: Request) => {
   const { error } = joi
@@ -12,6 +13,14 @@ export const postMessage = async (req: Request) => {
 
   if (error) {
     return Response.badRequest({ message: error.message });
+  }
+
+  const playersRepository = new PlayersRepository(); // Create an instance of PlayersRepository
+  const userId = req.query.userId ?? req.userId;
+  const playerStatus = await playersRepository.getPlayerStatus(userId); // Call getPlayerStatus on playersRepository
+
+  if (playerStatus === 'dead') {
+    return Response.badRequest({ message: 'Player is dead.' });
   }
 
   const repository = new MessageRepository();

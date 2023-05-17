@@ -1,6 +1,7 @@
 import { WillRepository } from '../repositories';
 import { Request, Response } from '../utils';
 import joi from 'joi';
+import { PlayersRepository } from '../repositories/PlayersRepository';
 
 export const update = async (req: Request) => {
   const { error } = joi
@@ -33,6 +34,15 @@ export const update = async (req: Request) => {
       })
     ).data;
   } else if (req.body.time > will.time) {
+    const playersRepository = new PlayersRepository(); // Create an instance of PlayersRepository
+
+    const userId = req.query.userId ?? req.userId;
+    const playerStatus = await playersRepository.getPlayerStatus(userId); // Call getPlayerStatus on playersRepository
+
+    if (playerStatus === 'dead') {
+      return Response.badRequest({ message: 'Player is dead.' });
+    }
+
     will.time = req.body.time;
     will.data = req.body.content;
     updatedContent = (await repository.update(will)).data;
@@ -68,6 +78,14 @@ export const getWill = async (req: Request): Promise<Response> => {
     userId,
     req.params.lobbyId,
   );
+
+  if (will) {
+    const playersRepository = new PlayersRepository(); // Create an instance of PlayersRepository
+    const playerStatus = await playersRepository.getPlayerStatus(userId); // Call the checkStatus function with the userId
+    if (playerStatus === 'dead') {
+      return Response.badRequest({ message: 'Player is dead.' });
+    }
+  }
 
   return Response.success({ data: will?.data ?? '' });
 };
