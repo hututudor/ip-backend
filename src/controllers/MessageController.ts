@@ -2,6 +2,8 @@ import { MessageRepository } from '../repositories';
 import { Request, Response } from '../utils';
 import joi from 'joi';
 import { GameEngineManager } from '../services/GameEngineManager';
+import { PlayersRepository } from '../repositories/PlayersRepository';
+import { Player } from '../models';
 
 export const postMessage = async (req: Request) => {
   const { error } = joi
@@ -47,7 +49,6 @@ export const postGlobalMessage = async (req: Request) => {
   const { error } = joi
     .object({
       content: joi.string().required(),
-      peers: joi.array().items(joi.string()).required(),
     })
     .validate(req.body);
 
@@ -56,8 +57,10 @@ export const postGlobalMessage = async (req: Request) => {
   }
 
   const repository = new MessageRepository();
+  const playersRepository = new PlayersRepository();
 
-  const peers = req.body.peers;
+  const players: Player[] = await playersRepository.getPlayersInLobby(req.params.lobbyId);
+  const peers: string[] = players.map((player: Player) => player.id);
 
   await Promise.all(
     peers.map((peer: string) =>

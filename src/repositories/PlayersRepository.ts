@@ -23,4 +23,9 @@ export class PlayersRepository extends Repository<Player> {
       .update('status', status)
       .where({ userId: userId, lobbyId: lobbyId });
   }
+  async getPlayersInLobby(lobbyId: string): Promise<Player[]> {
+    return knex(this.getTableName())
+      .where('lobbyId', lobbyId)
+      .select('*');
+  }
 }
