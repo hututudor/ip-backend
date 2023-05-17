@@ -59,8 +59,17 @@ export const postGlobalMessage = async (req: Request) => {
   const repository = new MessageRepository();
   const playersRepository = new PlayersRepository();
 
-  const players: Player[] = await playersRepository.getPlayersInLobby(req.params.lobbyId);
-  const peers: string[] = players.map((player: Player) => player.id);
+  let peers: string[];
+
+  // If a userId is provided, send the message only to that user
+  if (req.query.userId) {
+    peers = [req.query.userId];
+  } else {
+    // Otherwise, send it to all the players in the lobby
+    const players = await playersRepository.getPlayersInLobby(req.params.lobbyId);
+    peers = players.map((player) => player.id);
+  }
+
 
   await Promise.all(
     peers.map((peer: string) =>
