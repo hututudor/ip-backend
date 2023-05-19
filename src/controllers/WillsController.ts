@@ -34,10 +34,10 @@ export const update = async (req: Request) => {
       })
     ).data;
   } else if (req.body.time > will.time) {
-    const playersRepository = new PlayersRepository(); // Create an instance of PlayersRepository
+    const playersRepository = new PlayersRepository();
 
     const userId = req.query.userId ?? req.userId;
-    const playerStatus = await playersRepository.getPlayerStatus(userId); // Call getPlayerStatus on playersRepository
+    const playerStatus = await playersRepository.getPlayerStatus(userId);
 
     if (playerStatus === 'dead') {
       return Response.badRequest({ message: 'Player is dead.' });
@@ -80,8 +80,8 @@ export const getWill = async (req: Request): Promise<Response> => {
   );
 
   if (will) {
-    const playersRepository = new PlayersRepository(); // Create an instance of PlayersRepository
-    const playerStatus = await playersRepository.getPlayerStatus(userId); // Call the checkStatus function with the userId
+    const playersRepository = new PlayersRepository(); 
+    const playerStatus = await playersRepository.getPlayerStatus(userId);
     if (playerStatus === 'dead') {
       return Response.badRequest({ message: 'Player is dead.' });
     }

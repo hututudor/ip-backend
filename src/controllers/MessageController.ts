@@ -15,9 +15,9 @@ export const postMessage = async (req: Request) => {
     return Response.badRequest({ message: error.message });
   }
 
-  const playersRepository = new PlayersRepository(); // Create an instance of PlayersRepository
+  const playersRepository = new PlayersRepository();
   const userId = req.query.userId ?? req.userId;
-  const playerStatus = await playersRepository.getPlayerStatus(userId); // Call getPlayerStatus on playersRepository
+  const playerStatus = await playersRepository.getPlayerStatus(userId);
 
   if (playerStatus === 'dead') {
     return Response.badRequest({ message: 'Player is dead.' });
