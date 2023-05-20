@@ -35,4 +35,7 @@ export class PlayersRepository extends Repository<Player> {
 
     return null;
   }
+  async getPlayersInLobby(lobbyId: string): Promise<Player[]> {
+    return knex(this.getTableName()).where('lobbyId', lobbyId).select('*');
+  }
 }

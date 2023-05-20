@@ -156,6 +156,11 @@ export const GameEngineManager = {
     try {
       const { data } = await gameEngineClient.get(
         `/lobbies/${lobbyId}/peers?userId=${userId}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
       );
       return {
         status: 200,
