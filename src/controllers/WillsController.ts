@@ -18,7 +18,7 @@ export const update = async (req: Request) => {
   const lobbiesRepository = new LobbiesRepository();
   const lobby = await lobbiesRepository.getById(req.params.lobbyId);
   if (!lobby) {
-    return Response.notFound({ message: "Lobby not found" });
+    return Response.notFound({ message: 'Lobby not found' });
   } else if (lobby.status != 'started') {
     return Response.badRequest({ message: "The lobby didn't start" });
   }
@@ -79,7 +79,7 @@ export const getWill = async (req: Request): Promise<Response> => {
   const lobbiesRepository = new LobbiesRepository();
   const lobby = await lobbiesRepository.getById(req.params.lobbyId);
   if (!lobby) {
-    return Response.notFound({ message: "Lobby not found" });
+    return Response.notFound({ message: 'Lobby not found' });
   } else if (lobby.status != 'started') {
     return Response.badRequest({ message: "The lobby didn't start" });
   }
@@ -88,20 +88,20 @@ export const getWill = async (req: Request): Promise<Response> => {
     return Response.unauthorized(userId);
   }
 
+  if (userId !== req.query.userId) {
+    const playersRepository = new PlayersRepository();
+    const playerStatus = await playersRepository.getPlayerStatus(userId);
+    if (playerStatus !== 'dead') {
+      return Response.badRequest({ message: 'Player is alive.' });
+    }
+  }
+
   const repository = new WillRepository();
 
   const will = await repository.getByUserIdAndLobbyId(
     userId,
     req.params.lobbyId,
   );
-
-  if (will) {
-    const playersRepository = new PlayersRepository(); 
-    const playerStatus = await playersRepository.getPlayerStatus(userId);
-    if (playerStatus === 'dead') {
-      return Response.badRequest({ message: 'Player is dead.' });
-    }
-  }
 
   return Response.success({ data: will?.data ?? '' });
 };
