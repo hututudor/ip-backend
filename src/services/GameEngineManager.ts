@@ -179,4 +179,26 @@ export const GameEngineManager = {
       };
     }
   },
+  getAllLobbies: async (): Promise<Response> => {
+    try {
+      const { data } = await gameEngineClient.get(`/lobbies`);
+
+      return {
+        status: 200,
+        data,
+      };
+    } catch ({ response }: any) {
+      if (response) {
+        return {
+          status: response.status ?? 500,
+          data: response.data,
+        };
+      }
+
+      return {
+        status: 500,
+        data: undefined,
+      };
+    }
+  },
 };

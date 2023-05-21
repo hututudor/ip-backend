@@ -39,6 +39,7 @@ app.post(
   UsersController.auth,
   handleRequest(LobbiesController.join),
 );
+app.get('/lobbies', handleRequest(LobbiesController.getAll));
 app.get(
   '/state/:lobbyId',
   UsersController.auth,

@@ -22,3 +22,6 @@ export const quit = async (req: Request): Promise<Response> =>
     ...req.body,
     userId: req.userId,
   });
+
+export const getAll = async (req: Request): Promise<Response> =>
+  GameEngineManager.getAllLobbies();
