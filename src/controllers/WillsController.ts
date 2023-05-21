@@ -88,11 +88,13 @@ export const getWill = async (req: Request): Promise<Response> => {
     return Response.unauthorized(userId);
   }
 
-  if (userId !== req.query.userId) {
-    const playersRepository = new PlayersRepository();
-    const playerStatus = await playersRepository.getPlayerStatus(userId);
-    if (playerStatus !== 'dead') {
-      return Response.badRequest({ message: 'Player is alive.' });
+  if ( req.query.userId !== undefined ) {
+    if (userId !== req.query.userId) {
+      const playersRepository = new PlayersRepository();
+      const playerStatus = await playersRepository.getPlayerStatus(userId);
+      if (playerStatus !== 'dead') {
+        return Response.badRequest({message: 'Player is alive.'});
+      }
     }
   }
 

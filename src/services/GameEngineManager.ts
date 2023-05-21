@@ -38,7 +38,9 @@ export const GameEngineManager = {
         `/state/${lobbyId}?userId=${userId}`,
       );
 
-      if (!data?.currentUser?.isAlive) {
+      if (data != null && data.currentUser != null && !data.currentUser.isAlive) {
+        // console.log(data.currentUser.username);
+        console.log("here");
         await new PlayersRepository().updatePlayerStatus(
           userId,
           lobbyId,
@@ -74,7 +76,7 @@ export const GameEngineManager = {
       //Create the lobby if it doesn't already exists
       const lobby = await new LobbiesRepository().getById(lobbyId);
       if (!lobby) {
-        new LobbiesRepository().create(lobbyId, 'waiting');
+        await new LobbiesRepository().create(lobbyId, 'waiting');
       }
 
       //Assign player to lobby
