@@ -20,6 +20,13 @@ export const postMessage = async (req: Request) => {
     return Response.badRequest({ message: error.message });
   }
 
+  const playersRepository = new PlayersRepository();
+  const userId = req.query.userId ?? req.userId;
+  const playerStatus = await playersRepository.getPlayerStatus(userId);
+
+  if (playerStatus === 'dead') {
+    return Response.badRequest({ message: 'Player is dead.' });
+  }
   const lobby = await new LobbiesRepository().getById(req.params.lobbyId);
   if (!lobby) {
     return Response.notFound({ message: 'Lobby not found' });

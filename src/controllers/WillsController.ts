@@ -1,6 +1,7 @@
 import { LobbiesRepository, WillRepository } from '../repositories';
 import { Request, Response } from '../utils';
 import joi from 'joi';
+import { PlayersRepository } from '../repositories/PlayersRepository';
 
 export const update = async (req: Request) => {
   const { error } = joi
@@ -17,7 +18,7 @@ export const update = async (req: Request) => {
   const lobbiesRepository = new LobbiesRepository();
   const lobby = await lobbiesRepository.getById(req.params.lobbyId);
   if (!lobby) {
-    return Response.notFound({ message: "Lobby not found" });
+    return Response.notFound({ message: 'Lobby not found' });
   } else if (lobby.status != 'started') {
     return Response.badRequest({ message: "The lobby didn't start" });
   }
@@ -41,6 +42,15 @@ export const update = async (req: Request) => {
       })
     ).data;
   } else if (req.body.time > will.time) {
+    const playersRepository = new PlayersRepository();
+
+    const userId = req.query.userId ?? req.userId;
+    const playerStatus = await playersRepository.getPlayerStatus(userId);
+
+    if (playerStatus === 'dead') {
+      return Response.badRequest({ message: 'Player is dead.' });
+    }
+
     will.time = req.body.time;
     will.data = req.body.content;
     updatedContent = (await repository.update(will)).data;
@@ -69,13 +79,21 @@ export const getWill = async (req: Request): Promise<Response> => {
   const lobbiesRepository = new LobbiesRepository();
   const lobby = await lobbiesRepository.getById(req.params.lobbyId);
   if (!lobby) {
-    return Response.notFound({ message: "Lobby not found" });
+    return Response.notFound({ message: 'Lobby not found' });
   } else if (lobby.status != 'started') {
     return Response.badRequest({ message: "The lobby didn't start" });
   }
 
   if (!userId) {
     return Response.unauthorized(userId);
+  }
+
+  if (userId !== req.query.userId) {
+    const playersRepository = new PlayersRepository();
+    const playerStatus = await playersRepository.getPlayerStatus(userId);
+    if (playerStatus !== 'dead') {
+      return Response.badRequest({ message: 'Player is alive.' });
+    }
   }
 
   const repository = new WillRepository();
