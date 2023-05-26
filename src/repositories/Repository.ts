@@ -30,4 +30,8 @@ export abstract class Repository<T extends Model> {
   async deleteById(id: string): Promise<void> {
     await knex(this.getTableName()).delete().where('id', id);
   }
+
+  async deleteAll(): Promise<void> {
+    await knex(this.getTableName()).delete();
+  }
 }

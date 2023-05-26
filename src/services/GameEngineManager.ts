@@ -98,6 +98,28 @@ export const GameEngineManager = {
       };
     }
   },
+  createLobby: async (): Promise<Response> => {
+    try {
+      const { data } = await gameEngineClient.post(`/lobbies`, {});
+
+      return {
+        status: 200,
+        data,
+      };
+    } catch ({ response }: any) {
+      if (response) {
+        return {
+          status: response.status ?? 500,
+          data: response.data,
+        };
+      }
+
+      return {
+        status: 500,
+        data: undefined,
+      };
+    }
+  },
   start: async (lobbyId: string): Promise<Response> => {
     try {
       const { data } = await gameEngineClient.post(
@@ -199,6 +221,14 @@ export const GameEngineManager = {
         status: 500,
         data: undefined,
       };
+    }
+  },
+  reset: async (): Promise<any> => {
+    try {
+      const { data } = await gameEngineClient.get('/reset');
+      return data;
+    } catch ({ response }: any) {
+      return response.data;
     }
   },
 };

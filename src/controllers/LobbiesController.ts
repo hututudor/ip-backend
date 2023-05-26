@@ -1,4 +1,3 @@
-import joi from 'joi';
 import { Request, Response } from '../utils';
 import { GameEngineManager } from '../services/GameEngineManager';
 
@@ -13,6 +12,9 @@ export const getState = async (req: Request): Promise<Response> =>
 
 export const join = async (req: Request): Promise<Response> =>
   GameEngineManager.join({ lobbyId: req.params.lobbyId, userId: req.userId });
+
+export const createLobby = async (): Promise<Response> =>
+  GameEngineManager.createLobby();
 
 export const start = async (req: Request): Promise<Response> =>
   GameEngineManager.start(req.params.lobbyId);

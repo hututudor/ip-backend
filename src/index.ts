@@ -9,6 +9,7 @@ import {
   UsersController,
   WillController,
   MessageController,
+  DBController,
 } from './controllers';
 import { handleRequest } from './utils/Request';
 
@@ -20,6 +21,8 @@ app.use(cors());
 app.get('/', (req, res) => {
   res.send('hello world');
 });
+
+app.get('/reset', handleRequest(DBController.reset));
 
 app.post('/login', handleRequest(UsersController.login));
 app.post('/register', handleRequest(UsersController.register));
@@ -38,6 +41,11 @@ app.post(
   `/lobbies/:lobbyId`,
   UsersController.auth,
   handleRequest(LobbiesController.join),
+);
+app.post(
+  '/lobbies',
+  UsersController.auth,
+  handleRequest(LobbiesController.createLobby),
 );
 app.get('/lobbies', handleRequest(LobbiesController.getAll));
 app.get(
