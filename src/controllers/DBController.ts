@@ -13,7 +13,6 @@ export const reset = async (req: Request): Promise<Response> => {
   new LobbiesRepository().deleteAll();
   new WillRepository().deleteAll();
   new MessageRepository().deleteAll();
-  new UsersRepository().deleteAll();
 
   const rulesResponse = await GameEngineManager.reset();
 
