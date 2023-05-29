@@ -91,9 +91,6 @@ export const getWill = async (req: Request): Promise<Response> => {
   if (req.query.userId) {
     const playersRepository = new PlayersRepository();
     const playerStatus = await playersRepository.getPlayerStatus(userId);
-    if (playerStatus !== 'dead') {
-      return Response.badRequest({ message: 'Player is alive.' });
-    }
   }
 
   const repository = new WillRepository();
