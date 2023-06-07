@@ -76,12 +76,6 @@ export const postMessage = async (req: Request) => {
 };
 
 export const postGlobalMessage = async (req: Request) => {
-  const authHeader = req.headers.authorization;
-
-  if (authHeader !== process.env.GAME_ENGINE_SECRET) {
-    return Response.unauthorized({ message: 'incorrect secret provided' });
-  }
-
   const { error } = joi
     .object({
       content: joi.string().required(),
