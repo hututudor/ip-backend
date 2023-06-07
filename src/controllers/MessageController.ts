@@ -57,7 +57,7 @@ export const postMessage = async (req: Request) => {
     const {
       data: { peers: lobbyPeers },
     } = await GameEngineManager.getPeers(req.params.lobbyId, senderId);
-    peers = lobbyPeers;
+    peers = lobbyPeers ?? [];
   }
 
   await Promise.all(
